@@ -5,22 +5,23 @@ import math
 
 @dataclasses.dataclass
 class Dream:
-    name: List[str]
-    min: float
-    max: float
-    pre: float
-    votes: float
+    name: str
+    dreamers: List[str]
+    minimum_budget: float
+    maximum_budget: float
+    preexisting_funding: float
+    total_funding: float
     funded: dataclasses.field(init=False) = 0
-    fun: dataclasses.field(init=False) = None
-    max_grant: dataclasses.field(init=False) = None
+    total_votes: dataclasses.field(init=False) = None
+    maximum_grant_sought: dataclasses.field(init=False) = None
     email: str = None
     url: str = None
     link: str = None
 
     def __post_init__(self):
-        self.fun = self.votes - self.pre
+        self.total_votes = self.total_funding - self.preexisting_funding
         self.funded = 0
-        self.max_grant = self.max - self.pre
+        self.maximum_grant_sought = self.maximum_budget - self.preexisting_funding
 
 
 class DreamList:
@@ -31,9 +32,10 @@ class DreamList:
     @classmethod
     def from_dataframe(cls, df):
         new_df = df.rename(columns= lambda x: x.strip().lower())
+        print([l for l in new_df.to_dict(orient="records")])
         dreamlist = [Dream(**l) for l in new_df.to_dict(orient='records')]
 
-        invalid_dreams = [a for a in dreamlist if math.isnan(a.votes) or a.min == a.max == 1]
+        invalid_dreams = [a for a in dreamlist if math.isnan(a.total_funding) or a.minimum_budget == a.maximum_budget == 1 or a.maximum_grant_sought == 0]
         for dream in invalid_dreams:
             dreamlist.remove(dream)
         output = cls(dreamlist)
@@ -50,7 +52,7 @@ class DreamList:
         self.invalid_dreams = []
 
     def calculate_total_tokens(self):
-        total_tokens = sum(d.fun for d in self.dreams)
+        total_tokens = sum(d.total_votes for d in self.dreams)
         return total_tokens
 
     def calculate_token_value(self, budget: float):
@@ -65,11 +67,11 @@ class DreamList:
             extra_budget = 0
             fully_funded = []
             for dream in self.dreams:
-                dream.funded += dream.fun*single_token
-                if dream.funded > dream.max:
-                    difference = dream.funded - dream.max
+                dream.funded += dream.total_votes * single_token
+                if dream.funded > dream.maximum_budget:
+                    difference = dream.funded - dream.maximum_budget
                     extra_budget += difference
-                    dream.funded = dream.max
+                    dream.funded = dream.maximum_budget
                     fully_funded.append(dream)
             self.fully_funded_dreams += fully_funded
             for dream in fully_funded:
@@ -77,6 +79,6 @@ class DreamList:
         for dream in self.dreams:
             dream.funded = round(dream.funded)
         for dream in self.fully_funded_dreams:
-            dream.fun = round(dream.funded)
-        print("BUDGET", budget, sum([dream.funded for dream in self.dreams + self.fully_funded_dreams]))
+            dream.funded = round(dream.funded)
+        return sum([dream.funded for dream in self.dreams + self.fully_funded_dreams])
 

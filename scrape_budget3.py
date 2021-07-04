@@ -102,14 +102,14 @@ def find_budget(driver):
     tables = driver.find_elements_by_xpath("//table")
     if len(tables) == 1:
         all_min, all_max = calculate_budget(tables[0])
-        return {"min": all_min, "max": all_max, "pre": 0, "votes": votes}
+        return {"minimum_budget": all_min, "maximum_budget": all_max, "preexisting_funding": 0, "total_funding": votes}
 
     elif len(tables) == 2:
         all_min, all_max = calculate_budget(tables[0])
         pre = calculate_prefunding(tables[1])
-        return {"min": all_min, "max": all_max, "pre": pre, "votes": votes}
+        return {"minimum_budget": all_min, "maximum_budget": all_max, "preexisting_funding": pre, "total_funding": votes}
     else:
-        return {"min": 0, "max": 0, "pre": 0, "votes": 0}
+        return {"minimum_budget": 0, "maximum_budget": 0, "preexisting_funding": 0, "total_funding": 0}
 
 def main(driver):
     driver.get("https://kiezburn.dreams.wtf/kb21")
@@ -121,26 +121,32 @@ def main(driver):
         sleep(1)
         this_dream = {}
         this_dream['link'] = h
-        this_dream['name'] = find_dreamers(driver)
+        this_dream['name'] = find_name(driver)
+        print(this_dream.get('name'))
+        this_dream['dreamers'] = find_dreamers(driver)
         this_dream.update(find_budget(driver))
         all_dreams.append(this_dream)
     return all_dreams
 
 
+def find_name(driver):
+    headers = driver.find_elements_by_xpath("//div/h1")
+    return headers[0].text
+
 if __name__ == "__main__":
     driver = webdriver.Chrome()
     #url = "https://kiezburn.dreams.wtf/kb21/60c9aed9551867002ccd8fcb"
     #driver.get(url)
-    #find_funded(driver)
+    #find_name(driver)
     #dreamers = find_budget(driver)
     #print(dreamers)
     all_dreams = main(driver)
     df = pd.DataFrame(all_dreams)
     print(df.head())
     import pickle
-    with open("dumped_df_with_votes.pickle", "wb") as f:
+    with open("dumped_df_with_names.pickle", "wb") as f:
         pickle.dump(df, f)
     ##d_list = DreamList.from_dataframe(df)
-    #driver.close()
+    driver.close()
 
 
