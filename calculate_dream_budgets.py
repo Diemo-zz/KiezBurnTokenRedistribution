@@ -13,11 +13,11 @@ lines = [f"# Budget: {budget} \n", "\n", f"# Budget allocated: {funded_dreams} \
 
 lines.append(f"## Fully Funded \n")
 for dream in dreamlist.fully_funded_dreams:
-    lines.append(f"[{dream.name}]({dream.link}) ({', '.join(dream.dreamers)}) got fully funded. ({dream.funded}€) \n \n")
+    lines.append(f"[{dream.name}]({dream.link}) got fully funded. ({dream.funded}€) \n \n")
 
 lines.append(f"## Partially Funded \n")
 for dream in sorted(dreamlist.dreams, key=lambda x: x.funded):
-    lines.append(f"[{dream.name}]({dream.link}) ({', '.join(dream.dreamers)}) got partially funded ({dream.funded}€ of "
+    lines.append(f"[{dream.name}]({dream.link}) got partially funded ({dream.funded}€ of "
                  f"{dream.minimum_budget-dream.preexisting_funding} - {dream.maximum_grant_sought}) "
                  f"({dream.funded*100/dream.maximum_grant_sought if dream.maximum_grant_sought else 100:.2f}%"
                  f" of maximum) \n \n")
