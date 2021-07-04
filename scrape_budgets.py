@@ -19,4 +19,4 @@ for dream in dreamlist.fully_funded_dreams:
 
 print("PARTIALLY FUNDED")
 for dream in sorted(dreamlist.dreams, key=lambda x: x.funded):
-    print(dream.link, dream.funded, dream.max)
+    print(dream.link, dream.funded, " out of ",  dream.max_grant, " requested.")

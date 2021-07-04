@@ -12,6 +12,7 @@ class Dream:
     votes: float
     funded: dataclasses.field(init=False) = 0
     fun: dataclasses.field(init=False) = None
+    max_grant: dataclasses.field(init=False) = None
     email: str = None
     url: str = None
     link: str = None
@@ -19,6 +20,7 @@ class Dream:
     def __post_init__(self):
         self.fun = self.votes - self.pre
         self.funded = 0
+        self.max_grant = self.max - self.pre
 
 
 class DreamList:
