@@ -1,6 +1,5 @@
 import pickle
 from DreamsList import DreamList
-from pprintpp import pprint
 from operator import attrgetter
 with open("dumped_df_with_names.pickle", "rb") as f:
     df = pickle.load(f)
@@ -10,7 +9,6 @@ budget = 9000
 dreamlist = DreamList.from_dataframe(df)
 
 funded_dreams = dreamlist.calculate_funding(budget)
-pprint(dreamlist.fully_funded_dreams)
 lines = [f"# Budget: {budget} \n", "\n", f"# Budget allocated: {funded_dreams} \n \n"]
 
 lines.append(f"## Fully Funded \n")
