@@ -28,14 +28,5 @@ lines.append(f"## No funding required/Invalid Dreams \n")
 for dream in dreamlist.invalid_dreams:
     lines.append(f"[{dream.name}]({dream.link}) - No funding given \n \n")
 
-with open("Results.md", "w", encoding="utf-8") as f:
+with open("results.md", "w", encoding="utf-8") as f:
     f.writelines(lines)
-
-
-
-
-print("FULLY FUNDED")
-
-print("PARTIALLY FUNDED")
-for dream in sorted(dreamlist.dreams, key=lambda x: x.funded):
-    print(dream.link, dream.funded, " out of ", dream.maximum_grant_sought, " requested.")

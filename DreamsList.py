@@ -32,7 +32,6 @@ class DreamList:
     @classmethod
     def from_dataframe(cls, df):
         new_df = df.rename(columns= lambda x: x.strip().lower())
-        print([l for l in new_df.to_dict(orient="records")])
         dreamlist = [Dream(**l) for l in new_df.to_dict(orient='records')]
 
         invalid_dreams = [a for a in dreamlist if math.isnan(a.total_funding) or a.minimum_budget == a.maximum_budget == 1 or a.maximum_grant_sought == 0]
