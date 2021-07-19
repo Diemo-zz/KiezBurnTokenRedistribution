@@ -44,7 +44,7 @@ class DreamList:
         new_df = df.rename(columns= lambda x: x.strip().lower())
         dreamlist = [Dream(**l) for l in new_df.to_dict(orient='records')]
 
-        invalid_dreams = [a for a in dreamlist if math.isnan(a.total_funding) or a.minimum_budget == a.maximum_budget == 1 or a.maximum_grant_sought == 0]
+        invalid_dreams = [a for a in dreamlist if not a.is_valid()]
         for dream in invalid_dreams:
             dreamlist.remove(dream)
         output = cls(dreamlist)
@@ -56,7 +56,7 @@ class DreamList:
             dreams_in = []
 
         self.fully_funded_dreams = []
-        self.invalid_dreams = [a for a in dreams_in if math.isnan(a.total_funding) or a.minimum_budget == a.maximum_budget == 1 or a.maximum_grant_sought == 0]
+        self.invalid_dreams = [a for a in dreams_in if not a.is_valid()]
         self.dreams = [a for a in dreams_in if a not in self.invalid_dreams]
 
     def calculate_total_tokens(self):
