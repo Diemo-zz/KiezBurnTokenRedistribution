@@ -26,5 +26,5 @@ lines.append(f"## No funding required/Invalid Dreams \n")
 for dream in dreamlist.invalid_dreams:
     lines.append(f"[{dream.name}]({dream.link}) - No funding given \n \n")
 
-with open("results.md", "w", encoding="utf-8") as f:
+with open("SecondResults.md", "w", encoding="utf-8") as f:
     f.writelines(lines)
