@@ -23,6 +23,16 @@ class Dream:
         self.funded = 0
         self.maximum_grant_sought = self.maximum_budget - self.preexisting_funding
 
+    def is_valid(self):
+        valid_votes = not math.isnan(self.total_funding)
+        try:
+            funding = float(self.total_funding)
+        except Exception as e:
+            print(e)
+            return False
+
+        dont_need_money = funding <= 0 or self.maximum_grant_sought == 0 or self.maximum_budget == self.minimum_budget == self.preexisting_funding
+        return valid_votes and not dont_need_money
 
 class DreamList:
     dreams: List[Dream]
