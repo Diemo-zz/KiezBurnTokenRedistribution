@@ -2,6 +2,10 @@ import dataclasses
 from typing import List
 import math
 
+class DreamInputException(Exception):
+    def __init__(self, message):
+        super(DreamInputException, self).__init__()
+        self.message = message
 
 @dataclasses.dataclass
 class Dream:
@@ -32,17 +36,18 @@ class Dream:
     def is_valid(self):
         try:
             funding = float(self.total_votes)
-        except Exception as e:
-            print(e)
+        except Exception:
             return False
         dont_need_money = funding <= 0 or self.maximum_grant_sought == 0 \
                           or self.maximum_budget == self.minimum_budget == self.preexisting_funding
         return not dont_need_money
 
-    def apply_funding(self, vote_value: float):
+    def apply_funding(self, vote_value: float) -> float:
+        if vote_value < 0:
+            raise DreamInputException(message="vote value must be greater than 0")
         value = self.total_votes*vote_value
-        if value > self.maximum_budget:
-            value = self.maximum_budget
+        if value > self.maximum_grant_sought:
+            value = self.maximum_grant_sought
         self.funded = value
         return self.funded
 

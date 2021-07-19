@@ -1,5 +1,5 @@
 import unittest
-from DreamsList import Dream
+from DreamsList import Dream, DreamInputException
 
 
 class MyTestCase(unittest.TestCase):
@@ -42,6 +42,17 @@ class MyTestCase(unittest.TestCase):
             total_funding=100.0
         )
         self.assertTrue(d.is_valid())
+
+    def test_apply_funding(self):
+        funding = self.dream.apply_funding(2)
+        self.assertEqual(100, funding)
+
+    def test_apply_funding_bigger_than_maximum_buget(self):
+        funding = self.dream.apply_funding(20)
+        self.assertEqual(150, funding)
+
+    def test_raises_exception_on_bad_input(self):
+        self.assertRaises(DreamInputException, self.dream.apply_funding, -2)
 
 
 if __name__ == "__main__":
