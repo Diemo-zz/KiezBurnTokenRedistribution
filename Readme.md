@@ -1,1 +1,1 @@
-Code as used to calculate the funding for Kiezburn dreams for 2021
+Code as used to calculate the funding for KiezBurn dreams for 2021
