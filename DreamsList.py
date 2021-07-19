@@ -19,20 +19,35 @@ class Dream:
     link: str = None
 
     def __post_init__(self):
+        self.funded = 0.0
+        self.calculate_votes()
+        self.calculate_grant()
+
+    def calculate_votes(self):
         self.total_votes = self.total_funding - self.preexisting_funding
-        self.funded = 0
+
+    def calculate_grant(self):
         self.maximum_grant_sought = self.maximum_budget - self.preexisting_funding
 
     def is_valid(self):
-        valid_votes = not math.isnan(self.total_funding)
         try:
-            funding = float(self.total_funding)
+            funding = float(self.total_votes)
         except Exception as e:
             print(e)
             return False
+        dont_need_money = funding <= 0 or self.maximum_grant_sought == 0 \
+                          or self.maximum_budget == self.minimum_budget == self.preexisting_funding
+        return not dont_need_money
 
-        dont_need_money = funding <= 0 or self.maximum_grant_sought == 0 or self.maximum_budget == self.minimum_budget == self.preexisting_funding
-        return valid_votes and not dont_need_money
+    def apply_funding(self, vote_value: float):
+        value = self.total_votes*vote_value
+        if value > self.maximum_budget:
+            value = self.maximum_budget
+        self.funded = value
+        return self.funded
+
+    def is_fully_funded(self):
+        return self.funded >= self.maximum_budget
 
 class DreamList:
     dreams: List[Dream]
