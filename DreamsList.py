@@ -43,12 +43,11 @@ class DreamList:
 
     def __init__(self, dreams_in: List[Dream] = None):
         if dreams_in is None:
-            self.dreams = []
-        else:
-            self.dreams = dreams_in
+            dreams_in = []
 
         self.fully_funded_dreams = []
-        self.invalid_dreams = []
+        self.invalid_dreams = [a for a in dreams_in if math.isnan(a.total_funding) or a.minimum_budget == a.maximum_budget == 1 or a.maximum_grant_sought == 0]
+        self.dreams = [a for a in dreams_in if a not in self.invalid_dreams]
 
     def calculate_total_tokens(self):
         total_tokens = sum(d.total_votes for d in self.dreams)
