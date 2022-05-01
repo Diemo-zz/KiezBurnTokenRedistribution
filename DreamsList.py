@@ -1,5 +1,5 @@
 import dataclasses
-from typing import List
+from typing import List, Dict
 import math
 
 class DreamInputException(Exception):
@@ -62,7 +62,11 @@ class DreamList:
     @classmethod
     def from_dataframe(cls, df):
         new_df = df.rename(columns= lambda x: x.strip().lower())
-        dreamlist = [Dream(**l) for l in new_df.to_dict(orient='records')]
+        dictionaries = [l for l in new_df.to_dict(orient='records')]
+        dictionaries = [{k: v for k, v in l.items() if not (k == 'budget' or k == 'pre')}  for l in dictionaries]
+
+        #dreamlist = [Dream(**l) for l in new_df.to_dict(orient='records')]
+        dreamlist = [Dream(**l) for l in dictionaries]
 
         invalid_dreams = [a for a in dreamlist if not a.is_valid()]
         for dream in invalid_dreams:
@@ -92,15 +96,12 @@ class DreamList:
         extra_budget = budget
         while extra_budget:
             single_token = self.calculate_token_value(extra_budget)
-            extra_budget = 0
-            fully_funded = []
+            budget_applied = 0
             for dream in self.dreams:
-                dream.funded += dream.total_votes * single_token
-                if dream.funded > dream.maximum_budget:
-                    difference = dream.funded - dream.maximum_budget
-                    extra_budget += difference
-                    dream.funded = dream.maximum_budget
-                    fully_funded.append(dream)
+                dream_budget = dream.apply_funding(single_token)
+                budget_applied += dream_budget
+            extra_budget = extra_budget - budget_applied
+            fully_funded = [d for d in self.dreams if d.is_fully_funded()]
             self.fully_funded_dreams += fully_funded
             for dream in fully_funded:
                 self.dreams.remove(dream)
